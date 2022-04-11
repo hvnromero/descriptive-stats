@@ -1,45 +1,85 @@
-###FILE FUNCTIONS
 
-def getColumn(fileName, position):
-
+def cleanData(fileName):
     f = open(fileName, "r")
     contents = f.readlines()
     f.close()
     data = []
-    
+
     for line in contents:
         line = line.rstrip("\n")
         parsedLine = line.split(",")
-        fixeddata = [int(i) for i in parsedLine]
-        data.append(fixeddata)
+        #fixeddata = [int(i) for i in parsedLine]
+        data.append(parsedLine)
 
-    return fixeddata
+    return data
+
+#get the column of data
+def makeItColumn(list, columnposition):
+    columnlist = []
+    for item in list:
+        columnlist.append(item[columnposition-1])
+
+    return columnlist
+
+#remove the column headers if the user specifies that headers need to be removed
+def removeHeaders(list, removenum):
+    if removenum > 0:
+        del list[0:removenum]
+
+    return list
+
+#replaces the missing values with the string "None" then counts the missing & true values
+def insertNone(list):
+    count = 0
+    for blank in range(len(list)):
+        if list[blank] == '':
+            list[blank] = 'None'
+            count += 1
+    return(list, count, (len(list)-count) )
+
+#removes the None values I inserted into the list
+def removeNone(list, value):
+    while value in list:
+        list.remove(value)
+
+    return list
+
+#turns the string list into an integer list
+def strIntoInt(list):
+
+    for value in range(len(list)):
+        list[value] = int(list[value])
+
+    return list
 
 ###STATS FUNCTIONS
 
-#minimum value
+# minimum value
 def maxvalfunc(data):
     maxval = max(data)
     return maxval
-    
-#maximum value
+
+
+# maximum value
 def minvalfunc(data):
     minval = min(data)
     return minval
-    
-#number of values
+
+# number of values
 def valnumfunc(data):
     valnum = len(data)
     return valnum
 
-#mean value
+
+# mean value
 from statistics import mean
 
 def meanvalfunc(data):
     meanval = mean(data)
     return meanval
 
-#standard deviation
+
+# standard deviation
 from statistics import stdev
 
 def standevfunc(data):
@@ -50,14 +90,31 @@ def standevfunc(data):
 ### MAIN
 print('main program begins')
 
-programName = input('File Name:')
-#skippedrows = input('# of Rows to be Skipped:')
-columns = input('Specification of Columns:')
+#user input file name
+programName = input('File Name: ')
+#user input column data number
+columns = int(input('Specification of Columns: '))
+#user input how many headers/rows to be skipped
+skippedrows = int(input('# of Rows to be Skipped: '))
 
-bigdata = getColumn(programName, columns)
+bigdata = cleanData(programName)
 
-print('max:', maxvalfunc(bigdata))
-print('min:', minvalfunc(bigdata))
-print('num of val:', valnumfunc(bigdata))
-print('mean:', meanvalfunc(bigdata))
-print('standard dev:', standevfunc(bigdata))
+#originalvaluesCount is the number of values before headers were removed
+theList, missingCount, orginalvaluesCount = insertNone(makeItColumn(bigdata, columns))
+
+#list without headers
+finalList = removeHeaders(theList, skippedrows)
+
+#list without missing values
+theFinalColumn = strIntoInt(removeNone(finalList, "None"))
+
+print(theFinalColumn)
+
+print('max:', maxvalfunc(theFinalColumn))
+print('min:', minvalfunc(theFinalColumn))
+print('num of values:', len(theFinalColumn))
+print('num of missing values:', missingCount)
+print('mean:', meanvalfunc(theFinalColumn))
+print('standard dev:', standevfunc(theFinalColumn))
+
+
