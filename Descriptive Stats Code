@@ -1,0 +1,63 @@
+###FILE FUNCTIONS
+
+def getColumn(fileName, position):
+
+    f = open(fileName, "r")
+    contents = f.readlines()
+    f.close()
+    data = []
+    
+    for line in contents:
+        line = line.rstrip("\n")
+        parsedLine = line.split(",")
+        fixeddata = [int(i) for i in parsedLine]
+        data.append(fixeddata)
+
+    return fixeddata
+
+###STATS FUNCTIONS
+
+#minimum value
+def maxvalfunc(data):
+    maxval = max(data)
+    return maxval
+    
+#maximum value
+def minvalfunc(data):
+    minval = min(data)
+    return minval
+    
+#number of values
+def valnumfunc(data):
+    valnum = len(data)
+    return valnum
+
+#mean value
+from statistics import mean
+
+def meanvalfunc(data):
+    meanval = mean(data)
+    return meanval
+
+#standard deviation
+from statistics import stdev
+
+def standevfunc(data):
+    standev = stdev(data)
+    return standev
+
+
+### MAIN
+print('main program begins')
+
+programName = input('File Name:')
+#skippedrows = input('# of Rows to be Skipped:')
+columns = input('Specification of Columns:')
+
+bigdata = getColumn(programName, columns)
+
+print('max:', maxvalfunc(bigdata))
+print('min:', minvalfunc(bigdata))
+print('num of val:', valnumfunc(bigdata))
+print('mean:', meanvalfunc(bigdata))
+print('standard dev:', standevfunc(bigdata))
